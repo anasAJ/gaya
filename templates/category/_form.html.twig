@@ -1,0 +1,17 @@
+
+{{ form_start(form) }}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+        {{ form_widget(form) }}
+        </div>
+    </div>
+</div>  
+<div class="card">
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{{ path('app_category_index') }}">< Retour à la liste</a>
+        <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+    </div>
+</div>
+{{ form_end(form) }}
+        

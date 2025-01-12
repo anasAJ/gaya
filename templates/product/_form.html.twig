@@ -1,0 +1,46 @@
+{{ form_start(form) }}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">'Ajouté le {{ "now"|date("m/d/Y") }} à {{ "now"|date("H:i") }}</h4>
+            <p class="card-description"></p>
+            <div class="form-group">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            </div>
+            <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            </div>
+            <div class="form-group">
+            {{ form_label(form.image) }}
+            {{ form_widget(form.image) }}
+            </div>
+            {# Récupérer les options du select depuis le champ de formulaire #}
+            {% set category_choices = form.category.vars.choices %}
+            {% set category_count = category_choices|length %}
+
+            {% if(category_count > 0) %}
+            <div class="form-group">
+            {{ form_label(form.category) }}
+            {{ form_widget(form.category) }}
+            </div>
+            {% else %}
+            <div class="alert alert-danger" role="alert">
+            <p>Aucune catégorie à assicier a votre produit, Merci d'en <a href="{{path('app_category_new')}}">créer une ici</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="card">
+      <div class="card-body">
+        {% if(category_count > 0) %}
+        <a class="btn btn-outline-primary" href="{{ path('app_product_index') }}">< Retour à la liste</a>
+        <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+        {% else %}
+        <p>Aucune catégorie à assicier a votre produit, Merci d'en <a href="{{path('app_category_new')}}">créer une ici</a></p>
+        {% endif %}
+      </div>
+</div>
+{{ form_end(form, { 'render_rest': false }) }}

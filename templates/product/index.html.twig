@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product index{% endblock %}
+
+{% block body %}
+    <h1>Produits</h1>
+    <a href="{{ path('app_product_new') }}">Nouveau produit</a>
+    <hr>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4">
+            <div class="card" style="width: 20rem;">
+                <img src="{{ asset('./public/uploads/products/' ~ product.image) }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p>{{ product.category.name }}</p>
+                    <p class="card-text">{{ product.description }}</p>
+                    <hr>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md">
+                        <a class="btn btn-primary" href="{{ path('app_product_show', {'id': product.id}) }}">Voir</a>
+                        <a class="btn btn-primary" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        {% else %}
+            Aucun enregistrement trouvé.
+        {% endfor %}
+    </div>
+
+    
+
+    
+                        
+{% endblock %}

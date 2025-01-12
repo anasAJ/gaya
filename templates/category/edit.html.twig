@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la catégorie{% endblock %}
+
+{% block body %}
+    <h1>Modifier la catégorie</h1>
+
+    {{ include('category/_form.html.twig', {'button_label': 'Modifier'}) }}
+    <div class="card">
+        <div class="card-body">
+            {{ include('category/_delete_form.html.twig') }}
+        </div>
+    </div>
+
+    
+{% endblock %}

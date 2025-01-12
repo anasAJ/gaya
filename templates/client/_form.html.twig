@@ -1,0 +1,121 @@
+{{ form_start(form) }}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Infos. prospect</h4>
+        <p class="card-description"></p>
+          <div class="row">
+            <div class="col">
+              {{ form_label(form.user) }}
+              {{ form_widget(form.user) }}
+            </div>
+            <div class="col">
+              {{ form_label(form.phase) }}
+              {{ form_widget(form.phase) }}
+            </div>
+            <div class="col">
+              {{ form_label(form.status) }}
+              {{ form_widget(form.status) }}
+            </div>
+          </div>
+          <hr>
+          <div class="form-group">
+            {{ form_label(form.first_name) }}
+            {{ form_widget(form.first_name) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.last_name) }}
+            {{ form_widget(form.last_name) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(form.phone) }}
+            {{ form_widget(form.phone) }}
+          </div>
+      </div>
+    </div>
+     
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Adresses</h4>
+        <p class="card-description"></p>
+
+        <ul id="addressList">
+          {% for address in client.adresses %}
+            <li>{{ address.address_1 }}, {{ address.address_2 }}, {{ address.city }}</li>
+          {% else %}
+            <li>Aucune adresse ajoutée</li>
+          {% endfor %}
+        </ul>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AdresseForm">
+          Creer une nouvelle adresse
+        </button>
+
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{{ path('app_client_index') }}">< Retour à la liste</a>
+        <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+        <button class="btn btn-outline-primary">Etape suivante ></button>
+    </div>
+</div>
+
+<!-- Modale pour ajouter une adresse -->
+    
+{{ form_end(form, { 'render_rest': false }) }}
+<!-- Modal -->
+<div class="modal fade" id="AdresseForm" tabindex="-1" aria-labelledby="AdresseFormLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="AdresseFormLabel">Nouvelle adresse</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ form_start(adress_form) }}
+          {{ form_widget(adress_form) }}
+        {{ form_end(adress_form) }} 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const phaseSelect = document.getElementById('client_phase');
+        const statusSelect = document.getElementById('client_status');
+
+        phaseSelect.addEventListener('change', function () {
+            const phaseId = phaseSelect.value;
+
+            statusSelect.innerHTML = '<option value="">Sélectionnez un statut</option>';
+
+            if (phaseId) {
+                fetch(`/client/status/${phaseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(status => {
+                            const option = document.createElement('option');
+                            option.value = status.id;
+                            option.textContent = status.name;
+                            statusSelect.appendChild(option);
+                        });
+                        statusSelect.disabled = false;
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            } else {
+                statusSelect.disabled = true;
+            }
+        });
+    });
+</script>

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Source index{% endblock %}
+
+{% block body %}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h1>Sources</h1>
+        <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Description</th>
+                <th>Added_date</th>
+                <th>Added_time</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for source in sources %}
+                <tr>
+                    <td>{{ source.id }}</td>
+                    <td>{{ source.name }}</td>
+                    <td>{{ source.url }}</td>
+                    <td>{{ source.description }}</td>
+                    <td>{{ source.addedDate }}</td>
+                    <td>{{ source.addedTime }}</td>
+                    <td>
+                        <a href="{{ path('app_source_show', {'id': source.id}) }}">show</a>
+                        <a href="{{ path('app_source_edit', {'id': source.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucun enregistrement trouvé!</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <a class="btn btn-primary" href="{{ path('app_source_new') }}">Créer une nouvelle</a>
+    </div>
+</div>
+{% endblock %}

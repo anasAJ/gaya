@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le produit{% endblock %}
+
+{% block body %}
+
+{{ include('product/_form.html.twig', {'button_label': 'Modifier'}) }}
+<div class="card mt-3">
+    <div class="card-body">
+        {{ include('product/_delete_form.html.twig') }}
+    </div>
+</div>
+    
+{% endblock %}

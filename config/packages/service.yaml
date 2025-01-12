@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true      # Active l'autowiring
+        autoconfigure: true # Active l'autoconfiguration
+
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%kernel.project_dir%/public/uploads/%'
