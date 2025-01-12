@@ -78,15 +78,44 @@
         <h1 class="modal-title fs-5" id="AdresseFormLabel">Nouvelle adresse</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      {{ form_start(adress_form) }}
       <div class="modal-body">
-        {{ form_start(adress_form) }}
-          {{ form_widget(adress_form) }}
-        {{ form_end(adress_form) }} 
+
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.designation) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.address_1) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.adress_2) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.city) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.zip) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.country) }}
+        </div>
+        <div class="form-group">
+          <label for="">Adresser 1</label>
+          {{ form_widget(adress_form.client) }}
+        </div>    
+        
       </div>
+      
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        {{ form_widget(adress_form.submit) }}
       </div>
+      {{ form_end(adress_form) }} 
     </div>
   </div>
 </div>

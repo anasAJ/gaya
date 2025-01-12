@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Adresses;
 use App\Entity\Client;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -20,6 +21,7 @@ class AdressesType extends AbstractType
         $clientId = $options['client_id'];
         //dd($clientId);
         $builder
+            ->add('designation', TextType::class)
             ->add('address_1', TextType::class)
             ->add('adress_2', TextType::class)
             ->add('city', TextType::class)
@@ -33,9 +35,10 @@ class AdressesType extends AbstractType
                 'query_builder' => function(EntityRepository $er) use ($clientId) {
                     return $er->createQueryBuilder('c')
                             ->where('c.id = :id')
-                            ->setParameter('id', $clientId); // Remplacez 42 par l'ID souhaité
+                            ->setParameter('id', $clientId); 
                 }
             ])
+            ->add('submit', SubmitType::class)
         ;
     }
 
