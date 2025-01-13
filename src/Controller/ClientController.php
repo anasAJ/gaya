@@ -49,19 +49,23 @@ final class ClientController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_client_show', methods: ['GET'])]
-    public function show(Client $client): Response
-    {
-        return $this->render('client/show.html.twig', [
-            'client' => $client,
-        ]);
-    }
+public function show(Client $client): Response
+{
+    $adresses = $client->getAdresses(); // Charge les adresses associées
+
+    return $this->render('client/show.html.twig', [
+        'client' => $client,
+        'adresses' => $adresses,
+    ]);
+}
+
 
     #[Route('/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Client $client, EntityManagerInterface $entityManager, $id): Response
+    public function edit(Request $request, Client $client, EntityManagerInterface $entityManager): Response
     {
         $adress = new Adresses();
         $adress_form = $this->createForm(AdressesType::class, $adress, [
-            'client_id' => $id
+            'client_id' => $client->getId(),
         ]);
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);

@@ -44,14 +44,17 @@
     <div class="card-body">
         <h4 class="card-title">Adresses</h4>
         <p class="card-description"></p>
-
-        <ul id="addressList">
-          {% for address in client.adresses %}
-            <li>{{ address.address_1 }}, {{ address.address_2 }}, {{ address.city }}</li>
-          {% else %}
-            <li>Aucune adresse ajoutée</li>
-          {% endfor %}
-        </ul>
+       {% if client.adresses %}
+            <ul id="addressList">
+                {% for address in client.adresses %}
+                    <li>{{ address.address1 }}, {{ address.address2 }}, {{ address.city }}</li>
+                {% else %}
+                    <li>Aucune adresse ajoutée</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Les adresses ne sont pas encore chargées.</p>
+        {% endif %}
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AdresseForm">
           Creer une nouvelle adresse
@@ -78,11 +81,11 @@
         <h1 class="modal-title fs-5" id="AdresseFormLabel">Nouvelle adresse</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      {{ form_start(adress_form) }}
+      {{ form_start(adress_form, {'action': path('app_api_adresses_add', {'clientId': client.id})}) }}
       <div class="modal-body">
 
         <div class="form-group">
-          <label for="">Adresser 1</label>
+          <label for="">Designation</label>
           {{ form_widget(adress_form.designation) }}
         </div>
         <div class="form-group">
@@ -90,24 +93,20 @@
           {{ form_widget(adress_form.address_1) }}
         </div>
         <div class="form-group">
-          <label for="">Adresser 1</label>
-          {{ form_widget(adress_form.adress_2) }}
+          <label for="">Adresser 2</label>
+          {{ form_widget(adress_form.address_2) }}
         </div>
         <div class="form-group">
-          <label for="">Adresser 1</label>
+          <label for="">Ville</label>
           {{ form_widget(adress_form.city) }}
         </div>
         <div class="form-group">
-          <label for="">Adresser 1</label>
+          <label for="">Code postal</label>
           {{ form_widget(adress_form.zip) }}
         </div>
         <div class="form-group">
-          <label for="">Adresser 1</label>
+          <label for="">Pays</label>
           {{ form_widget(adress_form.country) }}
-        </div>
-        <div class="form-group">
-          <label for="">Adresser 1</label>
-          {{ form_widget(adress_form.client) }}
         </div>    
         
       </div>
@@ -147,4 +146,47 @@
             }
         });
     });
+
+    document.getElementById('addAddressForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            alert('Erreur : ' + data.errors);
+            return;
+        }
+
+        const newAddress = await response.json();
+
+        // Ajouter l'adresse à la liste
+        const addressList = document.getElementById('addressList');
+        const newAddressItem = document.createElement('li');
+        newAddressItem.id = 'address-' + newAddress.id;
+        newAddressItem.textContent = `${newAddress.address_1}, ${newAddress.address_2}, ${newAddress.city}`;
+
+        // Retirer le message "Aucune adresse ajoutée" s'il est présent
+        const noAddressesMessage = document.getElementById('noAddresses');
+        if (noAddressesMessage) {
+            noAddressesMessage.remove();
+        }
+
+        addressList.appendChild(newAddressItem);
+
+        // Réinitialiser le formulaire
+        form.reset();
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout de l\'adresse:', error);
+        alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+});
+
 </script>

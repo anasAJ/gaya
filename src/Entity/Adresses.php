@@ -13,11 +13,11 @@ class Adresses
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'address_1', length: 255)]
     private ?string $address_1 = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $adress_2 = null;
+    
+    #[ORM\Column(name: 'address_2', length: 255)]
+    private ?string $address_2 = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
@@ -51,14 +51,14 @@ class Adresses
         return $this;
     }
 
-    public function getAdress2(): ?string
+    public function getAddress2(): ?string
     {
-        return $this->adress_2;
+        return $this->address_2;
     }
 
-    public function setAdress2(?string $adress_2): static
+    public function setAddress2(?string $address_2): static
     {
-        $this->adress_2 = $adress_2;
+        $this->address_2 = $address_2;
 
         return $this;
     }

@@ -48,6 +48,11 @@ class Client
     #[ORM\OneToMany(targetEntity: Adresses::class, mappedBy: 'client')]
     private Collection $adresses;
 
+    public function __toString(): string
+{
+    return $this->getFirstName() . ' ' . $this->getLastName();
+}
+
     public function __construct()
     {
         $this->adresses = new ArrayCollection();

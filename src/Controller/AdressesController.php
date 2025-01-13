@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Adresses;
+use App\Entity\Client;
 use App\Form\AdressesType;
 use App\Repository\AdressesRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,19 +25,41 @@ final class AdressesController extends AbstractController
         ]);
     }
 
-    #[Route('/api/new', name: 'app_api_address_new', methods: ['GET', 'POST'])]
-    public function api_new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/api/new/{clientId}', name: 'app_api_adresses_add', methods: ['POST'])]
+    public function add(Request $request, Client $client, EntityManagerInterface $entityManager, $clientId): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        dd($data);
         $adress = new Adresses();
-        $adress->setAddress1($data['']);
+        $client = $entityManager->getRepository(Client::class)->find($clientId);
+        if (!$client) {
+            return new JsonResponse([
+                'error' => 'Client not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+        $adress->setClient($client);
 
-        $entityManager->persist($adress);
-        $entityManager->flush();
+        $form = $this->createForm(AdressesType::class, $adress);
+        $form->handleRequest($request);
+        //dd($adress);
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $entityManager->persist($adress);
+            $entityManager->flush();
 
-        return new JsonResponse(['status' => 'success']);
+            // Retourner les informations de l'adresse pour l'afficher directement
+            return new JsonResponse([
+                'id' => $adress->getId(),
+                'address_1' => $adress->getAddress1(),
+                'address_2' => $adress->getAddress2(),
+                'city' => $adress->getCity(),
+            ], Response::HTTP_CREATED);
+        }
+
+        // En cas d'erreur, retourner les messages d'erreur
+        return new JsonResponse([
+            'errors' => (string) $form->getErrors(true, false),
+        ], Response::HTTP_BAD_REQUEST);
     }
+
 
     #[Route('/new', name: 'app_adresses_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
