@@ -51,6 +51,9 @@ final class AdressesController extends AbstractController
                 'address_1' => $adress->getAddress1(),
                 'address_2' => $adress->getAddress2(),
                 'city' => $adress->getCity(),
+                'zip' => $adress->getZip(),
+                'country' => $adress->getCountry(),
+                'designation' => $adress->getDesignation(),
             ], Response::HTTP_CREATED);
         }
 
@@ -58,6 +61,22 @@ final class AdressesController extends AbstractController
         return new JsonResponse([
             'errors' => (string) $form->getErrors(true, false),
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    
+    #[Route('/api/delete/{id}', name: 'app_api_adresses_delete', methods: ['DELETE'])]
+    public function remove(EntityManagerInterface $entityManager,Request $request, $id): JsonResponse
+    {
+        $adress = $entityManager->getRepository(Adresses::class)->find($id);
+
+        if (!$adress) {
+            return new JsonResponse(['error' => 'Adresse non trouvée'], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($adress);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => 'Adresse supprimée'], Response::HTTP_OK);
     }
 
 

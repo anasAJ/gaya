@@ -43,8 +43,16 @@ class ClientType extends AbstractType
                 'attr'=>[
                     'placeholder'=> 'Le téléphone de votre prospect',
                 ]])
-            ->add('added_date')
-            ->add('added_time')
+            ->add('added_date', TextType::class,[
+                'attr'=>[
+                    'readonly'=>true
+                ]
+            ])
+            ->add('added_time', TextType::class,[
+                'attr'=>[
+                    'readonly'=>true
+                ]
+            ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => function (User $user) {

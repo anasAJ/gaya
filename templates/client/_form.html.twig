@@ -1,10 +1,21 @@
-{{ form_start(form) }}
+{{ form_start(form, {'method':'POST', 'action': path('app_client_edit', {'id': client.id}),'attr': {'id': 'clientForm'}}) }}
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
+        <!-- Message flash -->
+        <div id="flashMessage" class="alert alert-success d-none"></div>
         <h4 class="card-title">Infos. prospect</h4>
+        
         <p class="card-description"></p>
           <div class="row">
+            <div class="col">
+              {{ form_label(form.added_date) }}
+              {{ form_widget(form.added_date) }}
+            </div>
+            <div class="col">
+              {{ form_label(form.added_time) }}
+              {{ form_widget(form.added_time) }}
+            </div>
             <div class="col">
               {{ form_label(form.user) }}
               {{ form_widget(form.user) }}
@@ -35,26 +46,52 @@
             {{ form_label(form.phone) }}
             {{ form_widget(form.phone) }}
           </div>
+          <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
       </div>
     </div>
      
 </div>
 
-<div class="card">
+
+
+{{ form_end(form, { 'render_rest': false }) }}
+{% if app.request.attributes.get('_route') == 'app_client_edit' %}
+<div class="card mt-3">
     <div class="card-body">
         <h4 class="card-title">Adresses</h4>
         <p class="card-description"></p>
-       {% if client.adresses %}
-            <ul id="addressList">
-                {% for address in client.adresses %}
-                    <li>{{ address.address1 }}, {{ address.address2 }}, {{ address.city }}</li>
-                {% else %}
-                    <li>Aucune adresse ajoutée</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Les adresses ne sont pas encore chargées.</p>
-        {% endif %}
+       <table class="table" id="addressTable">
+          <thead>
+              <tr>
+                  <th>Designation</th>
+                  <th>Adresse 1</th>
+                  <th>Adresse 2</th>
+                  <th>Ville</th>
+                  <th>Code postal</th>
+                  <th>Pays</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for address in client.adresses %}
+                  <tr>
+                      <td><b>{{ address.designation }}</b></td>
+                      <td>{{ address.address1 }}</td>
+                      <td>{{ address.address2 }}</td>
+                      <td>{{ address.city }}</td>
+                      <td>{{ address.zip }}</td>
+                      <td>{{ address.country }}</td>
+                      <td>
+                        <button class="btn btn-danger btn-sm delete-address" data-id="{{ address.id }}">Supprimer</button>
+                      </td>
+                  </tr>
+              {% else %}
+                  <tr id="noAddressRow">
+                      <td colspan="7" class="text-center">Aucune adresse ajoutée</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AdresseForm">
           Creer une nouvelle adresse
@@ -62,17 +99,6 @@
 
     </div>
 </div>
-<div class="card mt-3">
-    <div class="card-body">
-        <a class="btn btn-outline-primary" href="{{ path('app_client_index') }}">< Retour à la liste</a>
-        <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
-        <button class="btn btn-outline-primary">Etape suivante ></button>
-    </div>
-</div>
-
-<!-- Modale pour ajouter une adresse -->
-    
-{{ form_end(form, { 'render_rest': false }) }}
 <!-- Modal -->
 <div class="modal fade" id="AdresseForm" tabindex="-1" aria-labelledby="AdresseFormLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -81,7 +107,7 @@
         <h1 class="modal-title fs-5" id="AdresseFormLabel">Nouvelle adresse</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      {{ form_start(adress_form, {'action': path('app_api_adresses_add', {'clientId': client.id})}) }}
+      {{ form_start(adress_form, {'action': path('app_api_adresses_add', {'clientId': client.id}),'attr': {'id': 'adressForm'}}) }}
       <div class="modal-body">
 
         <div class="form-group">
@@ -118,75 +144,15 @@
     </div>
   </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const phaseSelect = document.getElementById('client_phase');
-        const statusSelect = document.getElementById('client_status');
+{% endif %}
+<div class="card mt-3">
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{{ path('app_client_index') }}">< Retour à la liste</a>
+        <button class="btn btn-outline-primary">Etape suivante ></button>
+    </div>
+</div>
 
-        phaseSelect.addEventListener('change', function () {
-            const phaseId = phaseSelect.value;
 
-            statusSelect.innerHTML = '<option value="">Sélectionnez un statut</option>';
-
-            if (phaseId) {
-                fetch(`/client/status/${phaseId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.forEach(status => {
-                            const option = document.createElement('option');
-                            option.value = status.id;
-                            option.textContent = status.name;
-                            statusSelect.appendChild(option);
-                        });
-                        statusSelect.disabled = false;
-                    })
-                    .catch(error => console.error('Erreur:', error));
-            } else {
-                statusSelect.disabled = true;
-            }
-        });
-    });
-
-    document.getElementById('addAddressForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    try {
-        const response = await fetch(form.action, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            alert('Erreur : ' + data.errors);
-            return;
-        }
-
-        const newAddress = await response.json();
-
-        // Ajouter l'adresse à la liste
-        const addressList = document.getElementById('addressList');
-        const newAddressItem = document.createElement('li');
-        newAddressItem.id = 'address-' + newAddress.id;
-        newAddressItem.textContent = `${newAddress.address_1}, ${newAddress.address_2}, ${newAddress.city}`;
-
-        // Retirer le message "Aucune adresse ajoutée" s'il est présent
-        const noAddressesMessage = document.getElementById('noAddresses');
-        if (noAddressesMessage) {
-            noAddressesMessage.remove();
-        }
-
-        addressList.appendChild(newAddressItem);
-
-        // Réinitialiser le formulaire
-        form.reset();
-    } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'adresse:', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
-    }
-});
-
-</script>
+<script src="{{ asset('js/statusPhase.js') }}"></script>
+<script src="{{ asset('js/adress.js') }}"></script>
+<script src="{{ asset('js/client.js') }}"></script>

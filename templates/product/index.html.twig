@@ -6,31 +6,37 @@
     <h1>Produits</h1>
     <a href="{{ path('app_product_new') }}">Nouveau produit</a>
     <hr>
-    <div class="row">
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for product in products %}
-        <div class="col-md-4">
-            <div class="card" style="width: 20rem;">
-                <img src="{{ asset('./public/uploads/products/' ~ product.image) }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p>{{ product.category.name }}</p>
-                    <p class="card-text">{{ product.description }}</p>
-                    <hr>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md">
-                        <a class="btn btn-primary" href="{{ path('app_product_show', {'id': product.id}) }}">Voir</a>
-                        <a class="btn btn-primary" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
-                    </div>
-                    
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="{{ asset('./public/uploads/products/' ~ product.image) }}" class="bd-placeholder-img card-img-top" width="10%" height="10%"  role="img" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p>{{ product.category.name }}</p>
+              <div style="
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap; 
+                max-height: 3.2em; " class="card-text ">{{ product.description }}
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="{{ path('app_product_show', {'id': product.id}) }}" type="button" class="btn btn-sm btn-outline-secondary">View</a>
+                  <a href="{{ path('app_product_edit', {'id': product.id}) }}" type="button" class="btn btn-sm btn-outline-secondary">Edit</a>
                 </div>
+                <small class="text-body-secondary"></small>
+              </div>
             </div>
+          </div>
         </div>
         {% else %}
             Aucun enregistrement trouvé.
         {% endfor %}
     </div>
-
-    
-
-    
+</div>  
                         
 {% endblock %}
