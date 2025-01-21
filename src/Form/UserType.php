@@ -3,10 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Category;
+use App\Entity\Roles;
+use App\Entity\Team;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -53,6 +56,22 @@ class UserType extends AbstractType
                     },
                     'by_reference' => false, // Important pour ManyToMany
                 ])
+            ->add('roles', ChoiceType::class, [
+                    'choices'  => [
+                        'Administrateur' => 'ROLE_ADMIN',
+                        'Utilisateur' => 'ROLE_USER',
+                        'Manager' => 'ROLE_MANAGER',
+                    ],
+                    'multiple' => false, // Sélection multiple
+                    'expanded' => true, // Affichage sous forme de cases à cocher
+                    'data' => $options['data']->getRoles()[0] ?? 'ROLE_USER',
+                ])
+            ->add('team', EntityType::class, [
+                    'class' => Team::class,
+                    'choice_label' => 'name', 
+                    'multiple' => false, 
+                    'expanded' => true
+                ]);
             /*->add('password', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'constraints' => [

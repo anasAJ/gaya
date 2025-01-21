@@ -36,17 +36,31 @@
                 </div>
             </div>
             {% endif %}
-            <div class="col">
-            <div class="form-group">
-                <div class="form-check">
-                    {% for category in form.categories %}
-                        <div class="form-check">
-                            {{ form_widget(category, {'attr': {'class': 'form-check-input', 'id': 'category_' ~ loop.index}}) }}
-                            {{ form_label(category, null, {'label_attr': {'class': 'form-check-label'}, 'label': category.vars.label}) }}
+            <div class="card m-()">
+                <div class="row">
+                    <div class="col">
+                        {{ form_label(form.team) }}
+                        {{ form_widget(form.team) }}
+                    </div>
+                    <div class="col">
+                        {{ form_label(form.roles) }}
+                        {{ form_widget(form.roles) }}
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            {{ form_label(form.categories) }}
+                            <div class="form-check">
+                                {% for category in form.categories %}
+                                    <div class="form-check">
+                                        {{ form_widget(category, {'attr': {'class': 'form-check-input', 'id': 'category_' ~ loop.index}}) }}
+                                        {{ form_label(category, null, {'label_attr': {'class': 'form-check-label'}, 'label': category.vars.label}) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    {% endfor %}
-                 </div>
-            </div>
+                    </div>
+                    
+                </div>
             </div>
         </div>
     </div>

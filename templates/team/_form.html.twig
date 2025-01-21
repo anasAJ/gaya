@@ -1,0 +1,48 @@
+{{ form_start(form) }}
+    <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+             <div class="col form-group">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+            </div>
+            <div class="col form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+            </div>
+            <div class="col form-group">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom d'utilisateur</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in team.users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.fullname }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{% include('components/roles.html.twig') with { 'user': user } %}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">Aucun utilisateur dans cette équipe.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>  
+<div class="card">
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{{ path('app_team_index') }}">< Retour à la liste</a>
+        <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+    </div>
+</div>
+{{ form_end(form, { 'render_rest': false }) }}

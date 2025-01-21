@@ -1,0 +1,7 @@
+{% if user.roles|first == 'ROLE_USER' %}
+    Utilisateur
+{% elseif (user.roles|first) == 'ROLE_MANAGER' %}
+    Manager
+{% elseif (user.roles|first) == 'ROLE_ADMIN' %}
+    Administrateur
+{% endif %}

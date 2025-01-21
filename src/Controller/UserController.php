@@ -65,9 +65,12 @@ final class UserController extends AbstractController
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
+        //$roles = $form->getData()->getRoles();
+        //$role = $roles[0];
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword($oldPassword);
+            //$user->setRoles(array($role));
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);

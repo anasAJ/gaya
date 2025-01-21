@@ -11,20 +11,33 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>Nom & prenom</th>
                     <th>Email</th>
-                    <th>Roles</th>
-                    <th>Password</th>
+                    <th>phone</th>
+                    <th>Role</th>
+                    <th>Equipe</th>
                     <th>actions</th>
                 </tr>
             </thead>
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.id }}</td>
+                    <td>{{ user.firstname }} {{ user.lastname }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                    <td>{{ user.password }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{% include('components/roles.html.twig') with { 'user': user } %}</td>
+
+                    {% if user.team %}
+                        {% if user.roles|first == 'ROLE_USER' %}
+                            <td>{{ user.team.name }}</td>
+                        {% elseif (user.roles|first) == 'ROLE_MANAGER' %}
+                            <td>{{ user.team.name }}</td>
+                        {% elseif (user.roles|first) == 'ROLE_ADMIN' %}
+                            <td>Administrateur</td>
+                        {% endif %}
+                    {% else %}
+                        <td>Aucune</td>
+                    {% endif %}
                     <td>
                         <a href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
                         <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>
@@ -32,7 +45,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="4">Aucun enregistrement trouvé!</td>
+                    <td colspan="5">Aucun enregistrement trouvé!</td>
                 </tr>
             {% endfor %}
             </tbody>

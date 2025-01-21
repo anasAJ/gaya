@@ -54,6 +54,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'users')]
     private Collection $Categories;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Team $team = null;
+
     public function __tostring()    {
         return $this->first_name.' '.$this->last_name;
     }
@@ -108,9 +111,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param list<string> $roles
      */
-    public function setRoles(array $roles): static
+    public function setRoles(array|string $roles): static
     {
-        $this->roles = $roles;
+        $this->roles = is_array($roles) ? $roles : [$roles];
 
         return $this;
     }
@@ -193,6 +196,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFullName(){
+        return $this->getFirstName().' '.$this->getLastName();
+    }
+
     public function getPhone(): ?string
     {
         return $this->phone;
@@ -225,6 +232,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCategory(Category $category): static
     {
         $this->Categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
 
         return $this;
     }
