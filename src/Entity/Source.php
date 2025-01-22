@@ -43,10 +43,20 @@ class Source
     #[ORM\Column(length: 255)]
     private ?string $added_time = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $token = null;
+
+    /**
+     * @var Collection<int, Client>
+     */
+    #[ORM\OneToMany(targetEntity: Client::class, mappedBy: 'Source')]
+    private Collection $clients;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
         $this->Product = new ArrayCollection();
+        $this->clients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -158,6 +168,48 @@ class Source
     public function setAddedTime(string $added_time): static
     {
         $this->added_time = $added_time;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Client>
+     */
+    public function getClients(): Collection
+    {
+        return $this->clients;
+    }
+
+    public function addClient(Client $client): static
+    {
+        if (!$this->clients->contains($client)) {
+            $this->clients->add($client);
+            $client->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): static
+    {
+        if ($this->clients->removeElement($client)) {
+            // set the owning side to null (unless already changed)
+            if ($client->getSource() === $this) {
+                $client->setSource(null);
+            }
+        }
 
         return $this;
     }

@@ -9,6 +9,10 @@
         <p class="card-description"></p>
           <div class="row">
             <div class="col">
+              {{ form_label(form.source) }}
+              {{ form_widget(form.source) }}
+            </div>
+            <div class="col">
               {{ form_label(form.added_date) }}
               {{ form_widget(form.added_date) }}
             </div>

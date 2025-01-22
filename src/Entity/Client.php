@@ -48,6 +48,9 @@ class Client
     #[ORM\OneToMany(targetEntity: Adresses::class, mappedBy: 'client')]
     private Collection $adresses;
 
+    #[ORM\ManyToOne(inversedBy: 'clients')]
+    private ?Source $Source = null;
+
     public function __toString(): string
 {
     return $this->getFirstName() . ' ' . $this->getLastName();
@@ -197,6 +200,18 @@ class Client
                 $adress->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSource(): ?Source
+    {
+        return $this->Source;
+    }
+
+    public function setSource(?Source $Source): static
+    {
+        $this->Source = $Source;
 
         return $this;
     }

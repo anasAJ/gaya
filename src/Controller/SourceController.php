@@ -29,6 +29,9 @@ final class SourceController extends AbstractController
         $source = new Source();
         $form = $this->createForm(SourceType::class, $source);
         $form->handleRequest($request);
+        $source->setToken(bin2hex(random_bytes(32)));
+        $source->setAddedDate(date('Y-m-d'));
+        $source->setAddedTime(date('H:i:s'));
         //dd($categories);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($source);

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Client;
 use App\Entity\Phase;
+use App\Entity\Source;
 use App\Entity\Status;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -76,6 +77,15 @@ class ClientType extends AbstractType
                 'attr'=>[
                     'id'=> 'client_phase',
                 ]
+            ])
+            ->add('source', EntityType::class, [
+                'class' => Source::class,
+                'choice_label' => 'name',
+                'label'=> "La source associé",
+                'attr'=>[
+                    'readonly'=> true,
+                ]
+                
             ])
             /*->add('submit', SubmitType::class,[
                 'label' =>'Valider',

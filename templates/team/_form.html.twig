@@ -10,6 +10,8 @@
                 {{ form_label(form.description) }}
                 {{ form_widget(form.description) }}
             </div>
+            <h5>Liste des Utilisateurs associés</h5>
+            <hr>
             <div class="col form-group">
                 <table class="table">
                     <thead>
@@ -18,6 +20,7 @@
                             <th>Nom d'utilisateur</th>
                             <th>Email</th>
                             <th>Role</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,10 +30,11 @@
                                 <td>{{ user.fullname }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{% include('components/roles.html.twig') with { 'user': user } %}</td>
+                                <td><a href='{{ path('app_user_edit', {'id': user.id}) }}' target="_blank">Voir</td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="4">Aucun utilisateur dans cette équipe.</td>
+                                <td colspan="5">Aucun utilisateur dans cette équipe.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

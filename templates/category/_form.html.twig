@@ -1,9 +1,43 @@
-
 {{ form_start(form) }}
-<div class="col-12 grid-margin stretch-card">
+    <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-        {{ form_widget(form) }}
+             <div class="col form-group">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+            </div>
+            <div class="col form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+            </div>
+            <h5>Liste des produits associés</h5>
+            <hr>
+            <div class="col form-group">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Produit</th>
+                            <th>Déscription</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in category.products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description }}</td>
+                                <td><a href='{{ path('app_product_edit', {'id': product.id}) }}' target="_blank">Voir</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">Aucun utilisateur dans cette équipe.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>  
@@ -13,5 +47,4 @@
         <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
     </div>
 </div>
-{{ form_end(form) }}
-        
+{{ form_end(form, { 'render_rest': false }) }}
