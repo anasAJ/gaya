@@ -51,6 +51,12 @@ class Client
     #[ORM\ManyToOne(inversedBy: 'clients')]
     private ?Source $Source = null;
 
+    /**
+     * @var Collection<int, Production>
+     */
+    #[ORM\OneToMany(targetEntity: Production::class, mappedBy: 'client')]
+    private Collection $productions;
+
     public function __toString(): string
 {
     return $this->getFirstName() . ' ' . $this->getLastName();
@@ -59,6 +65,7 @@ class Client
     public function __construct()
     {
         $this->adresses = new ArrayCollection();
+        $this->productions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,6 +95,10 @@ class Client
         $this->last_name = $last_name;
 
         return $this;
+    }
+
+    public function getFullName(){
+        return $this->getFirstName().' '.$this->getLastName();
     }
 
     public function getEmail(): ?string
@@ -212,6 +223,36 @@ class Client
     public function setSource(?Source $Source): static
     {
         $this->Source = $Source;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Production>
+     */
+    public function getProductions(): Collection
+    {
+        return $this->productions;
+    }
+
+    public function addProduction(Production $production): static
+    {
+        if (!$this->productions->contains($production)) {
+            $this->productions->add($production);
+            $production->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduction(Production $production): static
+    {
+        if ($this->productions->removeElement($production)) {
+            // set the owning side to null (unless already changed)
+            if ($production->getClient() === $this) {
+                $production->setClient(null);
+            }
+        }
 
         return $this;
     }

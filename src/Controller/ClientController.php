@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Adresses;
 use App\Entity\Client;
+use App\Entity\Production;
 use App\Entity\Source;
 use App\Form\ClientType;
 use App\Form\AdressesType;
+use App\Form\ProductionType;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,26 +22,51 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ClientController extends AbstractController
 {
     #[Route(name: 'app_client_index', methods: ['GET'])]
-    public function index(ClientRepository $clientRepository): Response
+    public function index(ClientRepository $clientRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        if( $this->isGranted('ROLE_ADMIN')){
+            $query = $clientRepository->findAll();
+        }elseif($this->isGranted('ROLE_MANAGER')){
+            $query = $clientRepository->findClientsByUserTeam();
+        }else{
+            $query = $clientRepository->findClientsByUserId();
+        }
+        
+
+        // Paginer les résultats
+        $clients = $paginator->paginate(
+            $query, // La requête
+            $request->query->getInt('page', 1), // Numéro de page (par défaut : 1)
+            5 // Nombre d'éléments par page
+        );
+
         return $this->render('client/index.html.twig', [
-            'clients' => $clientRepository->findAll(),
+            'clients' => $clients,
         ]);
+
     }
 
     #[Route('/new', name: 'app_client_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $client = new Client();
-        $source = $entityManager->getRepository(Source::class)->findOneBy(['id' => 1]);
+        
 
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$client->getUser()){
+                $client->setUser($this->getUser());
+            }
             $client->setAddedDate(date('Y-m-d'));
             $client->setAddedTime(date('H:i:s'));
-            $client->setSource($source);
+            
+            if( !$client->getSource() or is_null($client->getSource())){
+                $source = $entityManager->getRepository(Source::class)->findOneBy(['id' => 1]);
+                $client->setSource($source);
+            }
+            
 
             $entityManager->persist($client);
             $entityManager->flush();
@@ -74,13 +102,15 @@ final class ClientController extends AbstractController
             'client_id' => $client->getId(),
         ]);
 
+        $production = new Production();
+        $production_form = $this->createForm(ProductionType::class, $production);
+
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            // Vérifie si la requête est AJAX
             if ($request->isXmlHttpRequest()) {
                 return new JsonResponse([
                     'success' => true,
@@ -88,9 +118,8 @@ final class ClientController extends AbstractController
                 ], Response::HTTP_OK);
             }
 
-            // Redirection si ce n'est pas une requête AJAX
             $this->addFlash('success', 'Client mis à jour avec succès !');
-            return $this->redirectToRoute('app_client_edit'); // Change la route si nécessaire
+            return $this->redirectToRoute('app_client_edit'); 
         }
 
         // Si la requête n'est PAS en AJAX, on affiche normalement le formulaire
@@ -98,6 +127,7 @@ final class ClientController extends AbstractController
             return $this->render('client/edit.html.twig', [
                 'form' => $form->createView(),
                 'adress_form' => $adress_form,
+                'production_form' => $production_form,
                 'client' => $client,
             ]);
         }

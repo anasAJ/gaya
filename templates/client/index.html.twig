@@ -14,6 +14,7 @@
                 <th>Phone</th>
                 <th>Ajouté le</th>
                 <th>Utilisateur</th>
+                <th>Equipe</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -27,8 +28,16 @@
                 <td>{{ client.addedDate }} à {{ client.addedTime }}</td>
                 <td>{{ client.user.fullname }}</td>
                 <td>
-                    <a href="{{ path('app_client_show', {'id': client.id}) }}">show</a>
-                    <a href="{{ path('app_client_edit', {'id': client.id}) }}">edit</a>
+                {% if client.user.team is not null %}
+                    {{ client.user.team.name }}
+                {% else %}
+                    Aucune
+                {% endif %}
+                </td>
+                <td>
+                {% if is_granted('EDIT', client) %}
+                    <a href="{{ path('app_client_edit', {'id': client.id}) }}">Modifier</a>
+                {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -38,6 +47,10 @@
         {% endfor %}
         </tbody>
     </table>
+    {# Pagination #}
 
+    <div class="pagination d-flex justify-content-center mt-3">
+        {{ knp_pagination_render(clients) }}
+    </div>
     <a href="{{ path('app_client_new') }}">Create new</a>
 {% endblock %}

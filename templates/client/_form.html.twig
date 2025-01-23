@@ -9,8 +9,8 @@
         <p class="card-description"></p>
           <div class="row">
             <div class="col">
-              {{ form_label(form.source) }}
-              {{ form_widget(form.source) }}
+              <label for="client_first_name" class="form-label required">Source</label><br>
+              <b>{{ client.source.name }}</b>
             </div>
             <div class="col">
               {{ form_label(form.added_date) }}
@@ -21,8 +21,13 @@
               {{ form_widget(form.added_time) }}
             </div>
             <div class="col">
-              {{ form_label(form.user) }}
-              {{ form_widget(form.user) }}
+              {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER') %}
+                {{ form_label(form.user) }}
+                {{ form_widget(form.user) }}
+              {% else %}
+                <label>Utilisateur</label><br>
+                <b>{{ app.user.firstName }} {{ app.user.lastName }}</b>
+              {% endif %}
             </div>
             <div class="col">
               {{ form_label(form.phase) }}
@@ -97,6 +102,7 @@
           </tbody>
       </table>
         <!-- Button trigger modal -->
+        <hr>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AdresseForm">
           Creer une nouvelle adresse
         </button>
@@ -148,6 +154,77 @@
     </div>
   </div>
 </div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h4 class="card-title">Production</h4>
+        <p class="card-description"></p>
+       <table class="table" id="productionTable">
+          <thead>
+              <tr>
+                  <th>Produit</th>
+                  <th>Signature</th>
+                  <th>Frais de dossier</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for production in client.productions %}
+                  <tr>
+                      <td><b>{{ production.product.name }}</b></td>
+                      <td>{{ production.SignatureProvider.provider }}</td>
+                      <td>{{ production.AppFees }}</td>
+                      <td>
+                        <button class="btn btn-danger btn-sm delete-production" data-id="{{ production.id }}">Supprimer</button>
+                      </td>
+                  </tr>
+              {% else %}
+                  <tr id="noProductionRow">
+                      <td colspan="4" class="text-center">Aucune adresse ajoutée</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+        <!-- Button trigger modal -->
+        <hr>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ProductionForm">
+          Ajouter un produit
+        </button>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="ProductionForm" tabindex="-1" aria-labelledby="productFormLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="productFormLabel">Nouveau produit</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      {{ form_start(production_form, {'action': path('app_api_production_add', {'clientId': client.id} ),'attr': {'id': 'productionForm'}}) }}
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="">Produit</label>
+          {{ form_widget(production_form.product) }}
+        </div>
+        <div class="form-group">
+          <label for="">Signature</label>
+          {{ form_widget(production_form.signature_provider) }}
+        </div>
+        <div class="form-group">
+          <label for="">Frais de dossier</label>
+          {{ form_widget(production_form.app_fees) }}
+        </div>  
+        
+      </div>
+      
+      <div class="modal-footer">
+        {{ form_widget(production_form.submit) }}
+      </div>
+      {{ form_end(production_form, {'render_rest':false}) }} 
+    </div>
+  </div>
+</div>
 {% endif %}
 <div class="card mt-3">
     <div class="card-body">
@@ -158,5 +235,6 @@
 
 
 <script src="{{ asset('js/statusPhase.js') }}"></script>
-<script src="{{ asset('js/adress.js') }}"></script>
+<script src="{{ asset('js/address.js') }}"></script>
+<script src="{{ asset('js/production.js') }}"></script>
 <script src="{{ asset('js/client.js') }}"></script>

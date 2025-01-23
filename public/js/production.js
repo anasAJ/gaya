@@ -1,13 +1,15 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("adressForm").addEventListener("submit", function (event) {
+    document.getElementById("productionForm").addEventListener("submit", function (event) {
         event.preventDefault(); // Empêche le rechargement de la page
 
-        let form = this;
-        let formData = new FormData(form);
+        let productionForm = this;
+        let productionFormData = new FormData(productionForm);
 
-        fetch(form.action, {
-            method: form.method,
-            body: formData,
+        fetch(productionForm.action, {
+            method: productionForm.method,
+            body: productionFormData,
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
@@ -17,31 +19,28 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.error) {
                 alert(data.error);
             } else {
-                let addressTable = document.getElementById("addressTable").querySelector("tbody");
+                let productionTable = document.getElementById("productionTable").querySelector("tbody");
 
                 // Supprimer la ligne "Aucune adresse ajoutée" si elle existe
-                let noAddressRow = document.getElementById("noAddressRow");
-                if (noAddressRow) {
-                    noAddressRow.remove();
+                let noProductionRow = document.getElementById("noProductionRow");
+                if (noProductionRow) {
+                    noProductionRow.remove();
                 }
-
+                console.log(data);
                 // Ajouter la nouvelle adresse au tableau
-                let newRow = document.createElement("tr");
-                newRow.innerHTML = `
-                    <td><b>${data.designation}</b></td>
-                    <td>${data.address_1}</td>
-                    <td>${data.address_2}</td>
-                    <td>${data.city}</td>
-                    <td>${data.zip}</td>
-                    <td>${data.country}</td>
+                let newProductionRow = document.createElement("tr");
+                newProductionRow.innerHTML = `
+                    <td><b>${data.product}</b></td>
+                    <td>${data.signature_provider}</td>
+                    <td>${data.app_fees}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm delete-address" data-id="${data.id}">Supprimer</button>
+                        <button class="btn btn-danger btn-sm delete-production" data-id="${data.id}">Supprimer</button>
                     </td>
                 `;
-                addressTable.appendChild(newRow);
+                productionTable.appendChild(newProductionRow);
 
                 // Fermer la modal
-                let modal = bootstrap.Modal.getInstance(document.getElementById("AdresseForm"));
+                let modal = bootstrap.Modal.getInstance(document.getElementById("ProductionForm"));
                 modal.hide();
 
                 // Réinitialiser le formulaire
@@ -51,15 +50,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Erreur :", error));
     });
 
-    const deleteAddressUrl = "{{ path('app_api_adresses_delete', {'id': '__ID__'}) }}";
     addressTable.addEventListener("click", function (event) {
-        if (event.target.classList.contains("delete-address")) {
+        if (event.target.classList.contains("delete-production")) {
             let button = event.target;
             let addressId = button.getAttribute("data-id");
-
-            // Générer l'URL de suppression avec l'ID
-            let url = deleteAddressUrl.replace('__ID__', addressId);
-
+    
+            // Remplacer {id} dans l'URL avec l'ID de l'adresse et s'assurer que l'URL est absolue
+            let url = window.location.origin + "/production/api/delete/" + addressId;
+    
+    
             fetch(url, {
                 method: "DELETE",
                 headers: { 
@@ -71,12 +70,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     let row = button.closest("tr");
                     row.remove();
-
+    
                     // Si le tableau est vide, ajouter la ligne "Aucune adresse ajoutée"
                     if (addressTable.children.length === 0) {
                         let noAddressRow = document.createElement("tr");
                         noAddressRow.id = "noAddressRow";
-                        noAddressRow.innerHTML = `<td colspan="7" class="text-center">Aucune adresse ajoutée</td>`;
+                        noAddressRow.innerHTML = `<td colspan="3" class="text-center">Aucune production ajoutée</td>`;
                         addressTable.appendChild(noAddressRow);
                     }
                 } else {
@@ -86,4 +85,5 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Erreur :", error));
         }
     });
+    
 });

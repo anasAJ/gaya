@@ -70,7 +70,8 @@ class UserType extends AbstractType
                     'class' => Team::class,
                     'choice_label' => 'name', 
                     'multiple' => false, 
-                    'expanded' => true
+                    'expanded' => true,
+                    'required' => false
                 ]);
             /*->add('password', RepeatedType::class, [
                     'type' => PasswordType::class,

@@ -9,8 +9,13 @@
         <p class="card-description"></p>
           <div class="row">
             <div class="col">
-              {{ form_label(form.user) }}
-              {{ form_widget(form.user) }}
+              {% if not is_granted('ROLE_USER') %}
+                {{ form_label(form.user) }}
+                {{ form_widget(form.user) }}
+              {% else %}
+                <label>Utilisateur</label><br>
+                <b>{{ app.user.firstName }} {{ app.user.lastName }}</b>
+              {% endif %}
             </div>
             <div class="col">
               {{ form_label(form.phase) }}

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Signature{% endblock %}
+
+{% block body %}
+    <h1>Signature</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ signature.id }}</td>
+            </tr>
+            <tr>
+                <th>Provider</th>
+                <td>{{ signature.provider }}</td>
+            </tr>
+            <tr>
+                <th>Meta_data</th>
+                <td>{{ signature.metaData ? signature.metaData|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Is_active</th>
+                <td>{{ signature.isActive ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_signature_index') }}">back to list</a>
+
+    <a href="{{ path('app_signature_edit', {'id': signature.id}) }}">edit</a>
+
+    {{ include('signature/_delete_form.html.twig') }}
+{% endblock %}
