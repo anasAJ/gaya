@@ -26,14 +26,86 @@
             {{ form_widget(form.category) }}
             </div>
             {% else %}
+            
             <div class="alert alert-danger" role="alert">
             <p>Aucune catégorie à assicier a votre produit, Merci d'en <a href="{{path('app_category_new')}}">créer une ici</a></p>
             </div>
             {% endif %}
         </div>
     </div>
+
 </div>
-<div class="card">
+<div class="card mt-3">
+    <div class="card-body">
+        <!-- Bouton pour ouvrir la modale -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customFieldModal">
+            Ajouter un champ
+        </button>
+
+        <!-- Tableau des champs personnalisés -->
+        <table class="table mt-3" id="customFieldsTable">
+            <thead>
+                <tr>
+                    <th>Libellé</th>
+                    <th>Type</th>
+                    <th>Contexte</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for field in product.customFields %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        <td>{{ field.type }}</td>
+                        <td>{{ field.ctx }}</td>
+                        <td><button class="btn btn-danger btn-sm delete-field" data-id="{{ field.id }}">Supprimer</button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Champ caché pour stocker les valeurs JSON -->
+        <input type="hidden" id="customFieldsInput">
+
+        <!-- Modale pour ajouter un champ -->
+        <div class="modal fade" id="customFieldModal" tabindex="-1" aria-labelledby="customFieldModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ajouter un champ personnalisé</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="fieldLabel" class="form-label">Libellé</label>
+                            <input type="text" class="form-control" id="fieldLabel">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fieldType" class="form-label">Type</label>
+                            <select class="form-control" id="fieldType">
+                                <option value="text">Texte</option>
+                                <option value="number">Nombre</option>
+                                <option value="float">Décimal</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fieldLabel" class="form-label">Contexte</label>
+                            <input type="text" class="form-control" id="fieldCtx">
+                        </div>
+                        <input type="hidden" value="{{ product.id }}" id="productId">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" id="addCustomField">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="card mt-3">
       <div class="card-body">
         {% if(category_count > 0) %}
         <a class="btn btn-outline-primary" href="{{ path('app_product_index') }}">< Retour à la liste</a>
@@ -45,3 +117,4 @@
 </div>
 
 {{ form_end(form, { 'render_rest': false }) }}
+<script src="{{ asset('js/productFields.js') }}"></script>

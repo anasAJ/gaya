@@ -75,10 +75,13 @@ final class ProductionController extends AbstractController
 
             $entityManager->persist($production);
             $entityManager->flush();
-
+            
             return new JsonResponse([
                 'id' => $production->getId(),
-                'product' => $production->getProduct()->getName(),
+                'products' => $production->getProduct()->map(fn($product) => [
+                    'id' => $product->getId(),
+                    'name' => $product->getName()
+                ])->toArray(),
                 'app_fees' => $production->getAppFees(),
                 'signature_provider' => $production->getSignatureProvider()->getProvider()
             ], Response::HTTP_CREATED);
@@ -88,6 +91,21 @@ final class ProductionController extends AbstractController
         return new JsonResponse([
             'errors' => (string) $form->getErrors(true, false),
         ], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/api/delete/{id}', name: 'app_api_production_delete', methods: ['DELETE'])]
+    public function remove(EntityManagerInterface $entityManager,Request $request, $id): JsonResponse
+    {
+        $production = $entityManager->getRepository(Production::class)->find($id);
+
+        if (!$production) {
+            return new JsonResponse(['error' => 'Production non trouvée'], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($production);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => 'Production supprimée'], Response::HTTP_OK);
     }
 
     #[Route('/{id}', name: 'app_production_show', methods: ['GET'])]

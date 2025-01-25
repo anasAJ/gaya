@@ -171,7 +171,13 @@
           <tbody>
               {% for production in client.productions %}
                   <tr>
-                      <td><b>{{ production.product.name }}</b></td>
+                      <td>
+                        <ul>
+                        {% for product_ in production.product %}
+                          <li><b>{{ product_.name }}</b></li>
+                        {% endfor %}
+                        </ul>
+                      </td>
                       <td>{{ production.SignatureProvider.provider }}</td>
                       <td>{{ production.AppFees }}</td>
                       <td>

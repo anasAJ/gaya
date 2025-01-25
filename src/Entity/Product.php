@@ -34,9 +34,19 @@ class Product
     #[ORM\ManyToMany(targetEntity: Source::class, mappedBy: 'Product')]
     private Collection $sources;
 
+    /**
+     * @var Collection<int, Production>
+     */
+    #[ORM\ManyToMany(targetEntity: Production::class, mappedBy: 'product')]
+    private Collection $productions;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $custom_fields = null;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
+        $this->productions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,6 +125,45 @@ class Product
         if ($this->sources->removeElement($source)) {
             $source->removeProduct($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Production>
+     */
+    public function getProductions(): Collection
+    {
+        return $this->productions;
+    }
+
+    public function addProduction(Production $production): static
+    {
+        if (!$this->productions->contains($production)) {
+            $this->productions->add($production);
+            $production->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduction(Production $production): static
+    {
+        if ($this->productions->removeElement($production)) {
+            $production->removeProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function getCustomFields(): ?array
+    {
+        return $this->custom_fields;
+    }
+
+    public function setCustomFields(?array $custom_fields): static
+    {
+        $this->custom_fields = $custom_fields;
 
         return $this;
     }

@@ -21,8 +21,6 @@ class Production
     #[ORM\ManyToOne(inversedBy: 'productions')]
     private ?Client $client = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Product $product = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $app_fees = null;
@@ -30,12 +28,18 @@ class Production
     #[ORM\ManyToOne(inversedBy: 'productions')]
     private ?Signature $signature_provider = null;
 
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'productions')]
+    private Collection $product;
+
 
 
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->product = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,18 +71,6 @@ class Production
         return $this;
     }
 
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
-
-    public function setProduct(?Product $product): static
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
     public function getAppFees(): ?float
     {
         return $this->app_fees;
@@ -99,6 +91,30 @@ class Production
     public function setSignatureProvider(?Signature $signature_provider): static
     {
         $this->signature_provider = $signature_provider;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(Product $product): static
+    {
+        if (!$this->product->contains($product)) {
+            $this->product->add($product);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): static
+    {
+        $this->product->removeElement($product);
 
         return $this;
     }
