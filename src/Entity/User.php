@@ -63,6 +63,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Production::class, mappedBy: 'user')]
     private Collection $productions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     public function __tostring()    {
         return $this->first_name.' '.$this->last_name;
     }
@@ -283,5 +286,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(): static
+    {
+        $this->slug = $this->getInitials($this->getFullName());
+
+        return $this;
+    }
+
+    function getInitials($phrase) {
+        $words = explode(' ', $phrase); 
+        $initials = '';
+    
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper($word[0]); 
+            }
+        }
+    
+        return $initials;
     }
 }

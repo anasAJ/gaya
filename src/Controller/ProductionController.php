@@ -73,6 +73,9 @@ final class ProductionController extends AbstractController
             $production->setClient($client);
             $production->setUser($user);
 
+            $customFieldsData = $request->request->all('customFields');
+            $production->setCustomFields($customFieldsData);
+
             $entityManager->persist($production);
             $entityManager->flush();
             

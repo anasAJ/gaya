@@ -1,8 +1,15 @@
 {{ form_start(form) }}
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
+        {% if user.slug != "" %}
+            <center><div class="avatar mt-3" id="avatar">{{ user.slug }}</div></center>
+        {% else %}
+            <center><div class="avatar mt-3" id="avatar">&#128515;</div></center>
+        {% endif %}
+        
         <div class="card-body">
             <div class="row">
+                <hr>
                 <div class="col form-group">
                 {{ form_label(form.first_name) }}
                 {{ form_widget(form.first_name) }}

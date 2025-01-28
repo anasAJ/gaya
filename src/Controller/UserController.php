@@ -38,6 +38,9 @@ final class UserController extends AbstractController
                 $plaintextPassword
             );
             $user->setPassword($hashedPassword);
+
+            $user->setSlug();
+
             $entityManager->persist($user);
             $entityManager->flush();
 

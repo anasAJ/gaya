@@ -36,6 +36,9 @@ class ProductionType extends AbstractType
             ->add('product', EntityType::class, [
                 'class' => Product::class,
                 'choice_label' => 'name',
+                'attr' => [
+                    'id' => 'productSelect',
+                ],
                 'expanded' => true,
                 'multiple' => true,
             ])

@@ -3,6 +3,9 @@ services:
         autowire: true      # Active l'autowiring
         autoconfigure: true # Active l'autoconfiguration
 
+    App\Twig\StringFormatterExtension:
+        tags: ['twig.extension']
+
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%kernel.project_dir%/public/uploads/%'

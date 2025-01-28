@@ -174,7 +174,16 @@
                       <td>
                         <ul>
                         {% for product_ in production.product %}
-                          <li><b>{{ product_.name }}</b></li>
+                          <li><b>{{ product_.name }}</b>
+                            {% set product_id = product_.id %} {# Convertir l'ID du produit en chaîne pour correspondre aux clés JSON #}
+                            {% if production.customFields[product_id] is defined %}
+                                <ul>
+                                    {% for field_name, field_value in production.customFields[product_id] %}
+                                        <li>{{ field_name|format_custom_field }} : {{ field_value }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                          </li>
                         {% endfor %}
                         </ul>
                       </td>
@@ -210,9 +219,14 @@
       <div class="modal-body">
 
         <div class="form-group">
-          <label for="">Produit</label>
-          {{ form_widget(production_form.product) }}
+            <label for="">Produit</label>
+            {{ form_widget(production_form.product) }}
         </div>
+
+        <!-- Conteneur où les champs personnalisés de chaque produit vont apparaître -->
+        <div id="customFieldsContainer"></div>
+
+        
         <div class="form-group">
           <label for="">Signature</label>
           {{ form_widget(production_form.signature_provider) }}
@@ -240,6 +254,7 @@
 </div>
 
 
+<script src="{{ asset('js/productionCustomFields.js') }}"></script>
 <script src="{{ asset('js/statusPhase.js') }}"></script>
 <script src="{{ asset('js/address.js') }}"></script>
 <script src="{{ asset('js/production.js') }}"></script>

@@ -43,6 +43,9 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?array $custom_fields = null;
 
+    #[ORM\Column]
+    private ?float $remuneration = null;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
@@ -164,6 +167,18 @@ class Product
     public function setCustomFields(?array $custom_fields): static
     {
         $this->custom_fields = $custom_fields;
+
+        return $this;
+    }
+
+    public function getRemuneration(): ?float
+    {
+        return $this->remuneration;
+    }
+
+    public function setRemuneration(float $remuneration): static
+    {
+        $this->remuneration = $remuneration;
 
         return $this;
     }

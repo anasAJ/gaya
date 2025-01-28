@@ -118,7 +118,8 @@ final class ProductController extends AbstractController
             'id' => uniqid(), // Générer un ID unique pour la suppression
             'label' => $data['label'],
             'type' => $data['type'],
-            'ctx' => $data['ctx']
+            'ctx' => $data['ctx'],
+            'name' => $data['name']
         ];
         $customFields[] = $newField;
 
@@ -158,4 +159,27 @@ final class ProductController extends AbstractController
 
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/api/{id}/custom-fields', name: 'api_product_custom_fields', methods: ['GET'])]
+    public function getCustomFields(Product $product): JsonResponse
+    {
+        
+       // Récupérer les champs personnalisés du produit
+        $customFields = $product->getCustomFields();  // Supposons que customFields soit une chaîne JSON
+
+        // Vérifier si customFields est une chaîne JSON et la décoder
+        if (is_string($customFields)) {
+            $customFields = json_decode($customFields, true);
+        }
+
+        // Si customFields est déjà un tableau, on le laisse tel quel
+        $response = [
+            'customFields' => $customFields ?: [],
+        ];
+
+        return new JsonResponse($response);
+    }
+
+
+
 }

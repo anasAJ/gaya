@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let type = document.getElementById("fieldType").value;
         let ctx = document.getElementById("fieldCtx").value;
         let productId = document.getElementById("productId").value; // ID du produit
+        let name_ = document.getElementById("fieldLabel").value.trim().replace(/\s+/g, "_");
+        let randomNum = Math.floor(1000 + Math.random() * 9000); // Génère un nombre aléatoire à 4 chiffres
+        let name = `${name_}_${randomNum}`;
         
         if (!label || !type) {
             alert("Veuillez remplir tous les champs !");
@@ -13,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Envoi des données au serveur via AJAX
         fetch(`/product/api/${productId}/add-custom-field`, {
             method: "POST",
-            body: JSON.stringify({ label: label, type: type, ctx: ctx }),
+            body: JSON.stringify({ label: label, type: type, ctx: ctx, name: name }),
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest"

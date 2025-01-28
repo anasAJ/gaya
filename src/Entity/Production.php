@@ -34,6 +34,9 @@ class Production
     #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'productions')]
     private Collection $product;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $custom_fields = null;
+
 
 
 
@@ -115,6 +118,18 @@ class Production
     public function removeProduct(Product $product): static
     {
         $this->product->removeElement($product);
+
+        return $this;
+    }
+
+    public function getCustomFields(): ?array
+    {
+        return $this->custom_fields;
+    }
+
+    public function setCustomFields(?array $custom_fields): static
+    {
+        $this->custom_fields = $custom_fields;
 
         return $this;
     }

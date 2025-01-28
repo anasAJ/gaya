@@ -26,11 +26,14 @@
             {{ form_widget(form.category) }}
             </div>
             {% else %}
-            
             <div class="alert alert-danger" role="alert">
             <p>Aucune catégorie à assicier a votre produit, Merci d'en <a href="{{path('app_category_new')}}">créer une ici</a></p>
             </div>
             {% endif %}
+            <div class="form-group">
+            {{ form_label(form.remuneration) }}
+            {{ form_widget(form.remuneration) }}
+            </div>
         </div>
     </div>
 
