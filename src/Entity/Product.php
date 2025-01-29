@@ -46,6 +46,9 @@ class Product
     #[ORM\Column]
     private ?float $remuneration = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $contract = null;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
@@ -179,6 +182,18 @@ class Product
     public function setRemuneration(float $remuneration): static
     {
         $this->remuneration = $remuneration;
+
+        return $this;
+    }
+
+    public function getContract(): ?string
+    {
+        return $this->contract;
+    }
+
+    public function setContract(?string $contract): static
+    {
+        $this->contract = $contract;
 
         return $this;
     }

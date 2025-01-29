@@ -9,8 +9,13 @@
         <p class="card-description"></p>
           <div class="row">
             <div class="col">
-              <label for="client_first_name" class="form-label required">Source</label><br>
-              <b>{{ client.source.name }}</b>
+              {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_MANAGER') %}
+                {{ form_label(form.source) }}
+                {{ form_widget(form.source) }}
+              {% else %}
+                {{ form_label(form.source) }}
+                {{ form_widget(form.source, {'attr': {'readonly': 'readonly'}}) }}
+              {% endif %}
             </div>
             <div class="col">
               {{ form_label(form.added_date) }}
@@ -26,7 +31,8 @@
                 {{ form_widget(form.user) }}
               {% else %}
                 <label>Utilisateur</label><br>
-                <b>{{ app.user.firstName }} {{ app.user.lastName }}</b>
+                {{ form_label(form.user) }}
+                {{ form_widget(form.user, {'attr': {'readonly': 'readonly'}}) }}
               {% endif %}
             </div>
             <div class="col">
@@ -47,13 +53,29 @@
             {{ form_label(form.last_name) }}
             {{ form_widget(form.last_name) }}
           </div>
-          <div class="form-group">
-            {{ form_label(form.email) }}
-            {{ form_widget(form.email) }}
+          <div class="row">
+            <div class="col-md-5">
+               <div class="form-group">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email) }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                {{ form_label(form.indicative) }}
+                {{ form_widget(form.indicative) }}
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="form-group">
+                {{ form_label(form.phone) }}
+                {{ form_widget(form.phone) }}
+              </div>
+            </div>
           </div>
           <div class="form-group">
-            {{ form_label(form.phone) }}
-            {{ form_widget(form.phone) }}
+            {{ form_label(form.comment) }}
+            {{ form_widget(form.comment) }}
           </div>
           <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
       </div>
@@ -195,7 +217,7 @@
                   </tr>
               {% else %}
                   <tr id="noProductionRow">
-                      <td colspan="4" class="text-center">Aucune adresse ajoutée</td>
+                      <td colspan="4" class="text-center">Aucune production ajoutée</td>
                   </tr>
               {% endfor %}
           </tbody>

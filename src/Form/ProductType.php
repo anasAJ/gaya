@@ -46,6 +46,20 @@ class ProductType extends AbstractType
                     'step' => '0.01', // Définit le pas pour les valeurs décimales
                 ],
             ])
+            ->add('contract', FileType::class, [
+                'label' => 'Contrat (fichier PDF)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf'
+                        ],
+                        'mimeTypesMessage' => 'Merci de choisir un fichier PDF valide',
+                    ])
+                ],
+            ])
             ->add('custom_fields', HiddenType::class, [
                 'mapped' => false, 
             ])

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -56,6 +57,12 @@ class Client
      */
     #[ORM\OneToMany(targetEntity: Production::class, mappedBy: 'client')]
     private Collection $productions;
+
+    #[ORM\Column(length: 10)]
+    private ?string $indicative = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $Comment = null;
 
     public function __toString(): string
 {
@@ -253,6 +260,30 @@ class Client
                 $production->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIndicative(): ?string
+    {
+        return $this->indicative;
+    }
+
+    public function setIndicative(string $indicative): static
+    {
+        $this->indicative = $indicative;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->Comment;
+    }
+
+    public function setComment(?string $Comment): static
+    {
+        $this->Comment = $Comment;
 
         return $this;
     }

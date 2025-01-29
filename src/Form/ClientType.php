@@ -10,6 +10,7 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -87,6 +88,11 @@ class ClientType extends AbstractType
                 ]
                 
             ])
+            ->add('comment', TextType::class,[
+                'attr' => ['rows' => 3],
+                'required' => false,
+            ])
+            ->add('indicative', TextType::class)
             /*->add('submit', SubmitType::class,[
                 'label' =>'Valider',
                 'attr'=>[

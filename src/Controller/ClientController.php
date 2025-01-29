@@ -61,6 +61,7 @@ final class ClientController extends AbstractController
             }
             $client->setAddedDate(date('Y-m-d'));
             $client->setAddedTime(date('H:i:s'));
+            $client->setIndicative('+33');
             
             if( !$client->getSource() or is_null($client->getSource())){
                 $source = $entityManager->getRepository(Source::class)->findOneBy(['id' => 1]);
@@ -109,6 +110,7 @@ final class ClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            //$client->setSource($client->getSource());
             $entityManager->flush();
 
             if ($request->isXmlHttpRequest()) {

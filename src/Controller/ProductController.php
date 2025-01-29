@@ -44,7 +44,7 @@ final class ProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             
             $brochureFile = $form->get('image')->getData();
-
+            $contractFile = $form->get('contract')->getData();
             
             if ($brochureFile) {
                 $originalFilename = pathinfo($brochureFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -64,10 +64,29 @@ final class ProductController extends AbstractController
                 $product->setImage($newFilename);
             }
 
+            if ($contractFile) {
+                $originalFilename = pathinfo($contractFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$brochureFile->guessExtension();
+
+                try {
+                    $brochureFile->move('./public/uploads/products/contracts', $newFilename);
+                } catch (FileException $e) {
+                    throw new \Exception("Erreur lors de l'upload du fichier");
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+
+                $product->setContract($newFilename);
+            }
+
             $entityManager->persist($product);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('product/new.html.twig', [
@@ -85,12 +104,53 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $brochureFile = $form->get('image')->getData();
+            //dd($brochureFile);
+            $contractFile = $form->get('contract')->getData();
+            
+            if ( !is_null($brochureFile)) {
+                $originalFilename = pathinfo($brochureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$brochureFile->guessExtension();
+
+                try {
+                    $brochureFile->move('./public/uploads/products', $newFilename);
+                } catch (FileException $e) {
+                    throw new \Exception("Erreur lors de l'upload du fichier");
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $product->setImage($newFilename);
+            }
+
+            if (!is_null($contractFile)) {
+                $originalFilename = pathinfo($contractFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$contractFile->guessExtension();
+
+                try {
+                    $contractFile->move('./public/uploads/products/contracts', $newFilename);
+                } catch (FileException $e) {
+                    throw new \Exception("Erreur lors de l'upload du fichier");
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+
+                //dd($newFilename);
+                $product->setContract($newFilename);
+            }
 
             $entityManager->flush();
 
