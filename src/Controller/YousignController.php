@@ -19,9 +19,15 @@ class YousignController extends AbstractController
     {
         // Récupération de la production depuis la base de données
         $production = $em->getRepository(Production::class)->find($production);
-        //dd($production->getClient()->getFirstName());
+        $signature_provider = $production->getSignatureProvider();
+        $products = $production->getProduct();
+
+        foreach($products as $product){
+            dd($product);
+        }
+        dd($production->getClient()->getFirstName());
         // Récupération du fichier et des informations du signataire
-        $file = ('./public/LMalt.pdf');
+        $file = ('./public/uploads/products/contracts/');
         $signerInfo = [
             'first_name' => $production->getClient()->getFirstName(),
             'last_name' => $production->getClient()->getLastName(),
