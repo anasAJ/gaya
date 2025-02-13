@@ -47,7 +47,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { route: app_login, allow_if: "!is_granted('ROLE_USER')" }
+        - { path: ^/, allow_if: "is_granted('ROLE_USER')" }
+        - { path: ^/, allow_if: "is_granted('ROLE_MANAGER')" }
+        - { path: ^/, allow_if: "is_granted('ROLE_ADMIN')" }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

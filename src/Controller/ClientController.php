@@ -96,8 +96,10 @@ final class ClientController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_client_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Client $client, EntityManagerInterface $entityManager): Response|JsonResponse
+    public function edit(Request $request, ClientRepository $clientRepository, $id, EntityManagerInterface $entityManager): Response|JsonResponse
     {
+        $client = $clientRepository->find($id);
+
         $adress = new Adresses();
         $adress_form = $this->createForm(AdressesType::class, $adress, [
             'client_id' => $client->getId(),

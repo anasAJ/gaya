@@ -25,7 +25,7 @@ class Production
     #[ORM\Column(nullable: true)]
     private ?float $app_fees = null;
 
-    #[ORM\ManyToOne(inversedBy: 'productions')]
+    #[ORM\ManyToOne(inversedBy: 'productions', fetch:'EAGER')]
     private ?Signature $signature_provider = null;
 
     /**
@@ -37,12 +37,19 @@ class Production
     #[ORM\Column(nullable: true)]
     private ?array $custom_fields = null;
 
+    /**
+     * @var Collection<int, Contract>
+     */
+    #[ORM\OneToMany(targetEntity: Contract::class, mappedBy: 'production')]
+    private Collection $contracts;
+
 
 
 
     public function __construct()
     {
         $this->product = new ArrayCollection();
+        $this->contracts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +137,36 @@ class Production
     public function setCustomFields(?array $custom_fields): static
     {
         $this->custom_fields = $custom_fields;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contract>
+     */
+    public function getContracts(): Collection
+    {
+        return $this->contracts;
+    }
+
+    public function addContract(Contract $contract): static
+    {
+        if (!$this->contracts->contains($contract)) {
+            $this->contracts->add($contract);
+            $contract->setProduction($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContract(Contract $contract): static
+    {
+        if ($this->contracts->removeElement($contract)) {
+            // set the owning side to null (unless already changed)
+            if ($contract->getProduction() === $this) {
+                $contract->setProduction(null);
+            }
+        }
 
         return $this;
     }

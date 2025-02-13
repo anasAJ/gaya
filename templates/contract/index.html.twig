@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contract index{% endblock %}
+
+{% block body %}
+    <h1>Contract index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Pdf_file</th>
+                <th>Signed_pdf_file</th>
+                <th>Metatdata</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contract in contracts %}
+            <tr>
+                <td>{{ contract.id }}</td>
+                <td>{{ contract.pdfFile }}</td>
+                <td>{{ contract.signedPdfFile }}</td>
+                <td>{{ contract.metatdata ? contract.metatdata|json_encode : '' }}</td>
+                <td>
+                    <a href="{{ path('app_contract_show', {'id': contract.id}) }}">show</a>
+                    <a href="{{ path('app_contract_edit', {'id': contract.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_contract_new') }}">Create new</a>
+{% endblock %}

@@ -129,8 +129,13 @@ class YousignService
     /**
      * 3. Ajouter un signataire à la demande de signature
      */
-    public function addSignerToSignatureRequest(string $signatureRequestId, string $documentId, array $signerInfo, array $cords)
+    public function addSignerToSignatureRequest(string $signatureRequestId, string $documentId, array $signerInfo, array $fields)
     {
+        foreach ($fields as &$item) {  
+            $item["document_id"] = $documentId;
+        }
+        unset($item);
+
         $data = [
             "info" => [
                 "first_name" => $signerInfo['first_name'],
@@ -141,19 +146,9 @@ class YousignService
             ],
             "signature_authentication_mode" => "no_otp",
             "signature_level" => "electronic_signature",
-            "fields" => [
-                [
-                    "document_id" => $documentId,
-                    "type" => "signature",
-                    "height" => $cords['height'],
-                    "width" => $cords['width'],
-                    "page" => $cords['page'],
-                    "x" => $cords['x'],
-                    "y" => $cords['y']
-                ]
-            ]
+            "fields" => $fields
         ];
-
+        //dd(json_encode($data));
         $this->httpClient->request('POST', $this->getApiUrl() . "/signature_requests/{$signatureRequestId}/signers", [
             'headers' => $this->getHeaders(),
             'json' => $data,
@@ -179,5 +174,31 @@ class YousignService
             'Authorization' => 'Bearer ' . $this->getApiKey(),
             'Content-Type' => 'application/json'
         ];
+    }
+
+    public function Sign($client, $contractList, $fields):string{
+        $path = './public/uploads/contracts/compiled/';
+        $finalFileName = $client->getFirstName()."_".$client->getLastName()."_".date('U').rand(100000,999999).".pdf";
+
+        $concat = new ConcatService();
+		$concat->setFiles($contractList);
+		$concat->concat();
+        $concat->Output($path.$finalFileName, 'F');
+
+                //dd($fields);
+        $signerInfo = [
+            'first_name' => $client->getFirstName(),
+            'last_name' => $client->getLastName(),
+            'email' => $client->getEmail(),
+            'phone_number' => $client->getIndicative() . substr($client->getPhone(), 1),
+        ];
+
+                // 1. Créer une demande de signature
+        $signatureRequestId = $this->createSignatureRequest();
+        $documentId = $this->addDocumentToSignatureRequest_($signatureRequestId, $path.$finalFileName);
+        $this->addSignerToSignatureRequest($signatureRequestId, $documentId, $signerInfo, $fields);
+        $this->activateSignatureRequest($signatureRequestId);
+
+        return $signatureRequestId;
     }
 }

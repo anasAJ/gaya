@@ -16,6 +16,27 @@ class ProductionRepository extends ServiceEntityRepository
         parent::__construct($registry, Production::class);
     }
 
+    public function findProductsByClientId(int $clientId): array
+    {
+        return $this->createQueryBuilder('pr')
+            ->join('pr.product', 'p')
+            ->join('pr.client', 'c')
+            ->where('c.id = :clientId')
+            ->setParameter('clientId', $clientId)
+            ->select('p') // On sélectionne uniquement les produits
+            ->getQuery()
+            ->getResult();
+    }
+     /*$products = $entityManager->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->join('p.productions', 'pr')
+            ->join('pr.client', 'c')
+            ->where('c.id = :clientId')
+            ->setParameter('clientId', 11)
+            ->getQuery()
+            ->getResult();
+        dd($products);*/
+
     //    /**
     //     * @return Production[] Returns an array of Production objects
     //     */

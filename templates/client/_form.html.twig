@@ -271,7 +271,7 @@
 <div class="card mt-3">
     <div class="card-body">
         <a class="btn btn-outline-primary" href="{{ path('app_client_index') }}">< Retour à la liste</a>
-        <button class="btn btn-outline-primary">Etape suivante ></button>
+        <a class="btn btn-outline-primary" href="{{ path('app_contract_new', {'client_id': client.id}) }}">Etape suivante ></a>
     </div>
 </div>
 

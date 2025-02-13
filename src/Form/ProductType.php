@@ -52,7 +52,7 @@ class ProductType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
+                        'maxSize' => '2024k',
                         'mimeTypes' => [
                             'application/pdf'
                         ],

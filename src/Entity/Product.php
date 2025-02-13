@@ -49,10 +49,20 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $contract = null;
 
+    /**
+     * @var Collection<int, Contract>
+     */
+    #[ORM\OneToMany(targetEntity: Contract::class, mappedBy: 'product')]
+    private Collection $contracts;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $meta_data = null;
+
     public function __construct()
     {
         $this->sources = new ArrayCollection();
         $this->productions = new ArrayCollection();
+        $this->contracts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -194,6 +204,48 @@ class Product
     public function setContract(?string $contract): static
     {
         $this->contract = $contract;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contract>
+     */
+    public function getcontracts(): Collection
+    {
+        return $this->contracts;
+    }
+
+    public function addcontracts(Contract $contracts): static
+    {
+        if (!$this->contracts->contains($contracts)) {
+            $this->contracts->add($contracts);
+            $contracts->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removecontracts(Contract $contracts): static
+    {
+        if ($this->contracts->removeElement($contracts)) {
+            // set the owning side to null (unless already changed)
+            if ($contracts->getProduct() === $this) {
+                $contracts->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMetaData(): ?array
+    {
+        return $this->meta_data;
+    }
+
+    public function setMetaData(?array $meta_data): static
+    {
+        $this->meta_data = $meta_data;
 
         return $this;
     }

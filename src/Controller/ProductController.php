@@ -61,18 +61,18 @@ final class ProductController extends AbstractController
 
                 // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
-                $product->setImage($newFilename);
+                $product->setImage('./public/uploads/products/' . $newFilename);
             }
 
-            if ($contractFile) {
+            if (!is_null($contractFile)) {
                 $originalFilename = pathinfo($contractFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$brochureFile->guessExtension();
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$contractFile->guessExtension();
 
                 try {
-                    $brochureFile->move('./public/uploads/products/contracts', $newFilename);
+                    $contractFile->move('./public/uploads/products/contracts', $newFilename);
                 } catch (FileException $e) {
                     throw new \Exception("Erreur lors de l'upload du fichier");
                 }
@@ -80,7 +80,8 @@ final class ProductController extends AbstractController
                 // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
 
-                $product->setContract($newFilename);
+                //dd($newFilename);
+                $product->setContract('./public/uploads/products/contracts/' . $newFilename);
             }
 
             $entityManager->persist($product);
@@ -129,7 +130,7 @@ final class ProductController extends AbstractController
 
                 // updates the 'brochureFilename' property to store the PDF file name
                 // instead of its contents
-                $product->setImage($newFilename);
+                $product->setImage('./public/uploads/products/' . $newFilename);
             }
 
             if (!is_null($contractFile)) {
@@ -149,7 +150,7 @@ final class ProductController extends AbstractController
                 // instead of its contents
 
                 //dd($newFilename);
-                $product->setContract($newFilename);
+                $product->setContract('./public/uploads/products/contracts/' . $newFilename);
             }
 
             $entityManager->flush();
