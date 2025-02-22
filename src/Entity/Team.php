@@ -27,9 +27,16 @@ class Team
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'team')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Predictive>
+     */
+    #[ORM\OneToMany(targetEntity: Predictive::class, mappedBy: 'team')]
+    private Collection $predictives;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->predictives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,6 +92,36 @@ class Team
             // set the owning side to null (unless already changed)
             if ($user->getTeam() === $this) {
                 $user->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Predictive>
+     */
+    public function getPredictives(): Collection
+    {
+        return $this->predictives;
+    }
+
+    public function addPredictive(Predictive $predictive): static
+    {
+        if (!$this->predictives->contains($predictive)) {
+            $this->predictives->add($predictive);
+            $predictive->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removePredictive(Predictive $predictive): static
+    {
+        if ($this->predictives->removeElement($predictive)) {
+            // set the owning side to null (unless already changed)
+            if ($predictive->getTeam() === $this) {
+                $predictive->setTeam(null);
             }
         }
 

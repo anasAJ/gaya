@@ -66,6 +66,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Predictive>
+     */
+    #[ORM\OneToMany(targetEntity: Predictive::class, mappedBy: 'user')]
+    private Collection $predictives;
+
+    #[ORM\Column]
+    private ?bool $is_active = null;
+
+    #[ORM\Column]
+    private ?bool $on_dispatching = null;
+
     public function __tostring()    {
         return $this->first_name.' '.$this->last_name;
     }
@@ -75,6 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->clients = new ArrayCollection();
         $this->Categories = new ArrayCollection();
         $this->productions = new ArrayCollection();
+        $this->predictives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -311,5 +324,59 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
     
         return $initials;
+    }
+
+    /**
+     * @return Collection<int, Predictive>
+     */
+    public function getPredictives(): Collection
+    {
+        return $this->predictives;
+    }
+
+    public function addPredictive(Predictive $predictive): static
+    {
+        if (!$this->predictives->contains($predictive)) {
+            $this->predictives->add($predictive);
+            $predictive->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePredictive(Predictive $predictive): static
+    {
+        if ($this->predictives->removeElement($predictive)) {
+            // set the owning side to null (unless already changed)
+            if ($predictive->getUser() === $this) {
+                $predictive->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->is_active;
+    }
+
+    public function setActive(bool $is_active): static
+    {
+        $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    public function isOnDispatching(): ?bool
+    {
+        return $this->on_dispatching;
+    }
+
+    public function setOnDispatching(bool $on_dispatching): static
+    {
+        $this->on_dispatching = $on_dispatching;
+
+        return $this;
     }
 }

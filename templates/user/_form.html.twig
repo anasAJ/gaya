@@ -11,6 +11,17 @@
             <div class="row">
                 <hr>
                 <div class="col form-group">
+                {{ form_label(form.is_active) }}
+                {{ form_widget(form.is_active) }}
+                </div>
+                <div class="col form-group">
+                {{ form_label(form.on_dispatching) }}
+                {{ form_widget(form.on_dispatching) }}
+                </div>
+            </div>
+            <div class="row">
+                <hr>
+                <div class="col form-group">
                 {{ form_label(form.first_name) }}
                 {{ form_widget(form.first_name) }}
                 </div>

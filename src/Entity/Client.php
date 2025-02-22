@@ -64,6 +64,9 @@ class Client
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $Comment = null;
 
+    #[ORM\Column]
+    private ?bool $is_predictive = null;
+
     public function __toString(): string
 {
     return $this->getFirstName() . ' ' . $this->getLastName();
@@ -284,6 +287,18 @@ class Client
     public function setComment(?string $Comment): static
     {
         $this->Comment = $Comment;
+
+        return $this;
+    }
+
+    public function isPredictive(): ?bool
+    {
+        return $this->is_predictive;
+    }
+
+    public function setPredictive(bool $is_predictive): static
+    {
+        $this->is_predictive = $is_predictive;
 
         return $this;
     }

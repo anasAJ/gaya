@@ -3,54 +3,106 @@
 {% block title %}Client index{% endblock %}
 
 {% block body %}
-    <h1>Client index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom & prénom</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Ajouté le</th>
-                <th>Utilisateur</th>
-                <th>Equipe</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for client in clients %}
-            <tr>
-                <td>{{ client.id }}</td>
-                <td>{{ client.firstName }} {{ client.lastName }}</td>
-                <td>{{ client.email }}</td>
-                <td>{{ client.phone }}</td>
-                <td>{{ client.addedDate }} à {{ client.addedTime }}</td>
-                <td>{{ client.user.fullname }}</td>
-                <td>
-                {% if client.user.team is not null %}
-                    {{ client.user.team.name }}
-                {% else %}
-                    Aucune
-                {% endif %}
-                </td>
-                <td>
-                {% if is_granted('EDIT', client) %}
-                    <a href="{{ path('app_client_edit', {'id': client.id}) }}">Modifier</a>
-                {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {# Pagination #}
-
-    <div class="pagination d-flex justify-content-center mt-3">
-        {{ knp_pagination_render(clients) }}
+{# Filter Form #}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(filterForm, {'method':'GET', 'action': path('app_client_index')}) }}
+            <p class="d-inline-flex gap-1">
+                <div class="row">
+                    <div class="col-md-3">{{ form_row(filterForm.first_name, {'attr': {'name': 'first_name'}}) }}</div>
+                    <div class="col-md-3">{{ form_row(filterForm.last_name, {'attr': {'name': 'last_name'}}) }}</div>
+                    <div class="col-md-3">{{ form_row(filterForm.email, {'attr': {'name': 'email'}}) }}</div>
+                    <div class="col-md-3">{{ form_row(filterForm.phone, {'attr': {'name': 'phone'}}) }}</div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <a class="btn btn-outline-primary" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilterr">
+                        + Filtres
+                    </a>
+                </div>
+            </p>
+            <div class="collapse" id="collapseFilter">
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(filterForm.added_date, {'attr': {'name': 'added_date'}}) }}</div>
+                        <div class="col-md-6">{{ form_row(filterForm.added_date_to, {'attr': {'name': 'added_date_to'}}) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">{{ form_row(filterForm.phase, {'attr': {'name': 'phase', 'id' : 'client_phase'}}) }}</div>
+                        <div class="col-md-4">{{ form_row(filterForm.status, {'attr': {'name': 'status', 'id' : 'client_status'}}) }}</div>
+                        <div class="col-md-4">{{ form_row(filterForm.source, {'attr': {'name': 'source'}}) }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+            <a href="{{ path('app_client_index') }}" class="btn btn-outline-primary">Réinitialiser</a>
+            {{ form_end(filterForm) }}
+        </div>
     </div>
-    <a href="{{ path('app_client_new') }}">Create new</a>
+</div> 
+{# Mane Table #}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+        <h1>Client index</h1>
+        <a href="{{ path('app_client_new') }}">Create new</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom & prénom</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Ajouté le</th>
+                    <th>Utilisateur</th>
+                    <th>Equipe</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>{{ client.id }}</td>
+                    <td>{{ client.firstName }} {{ client.lastName }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.phone }}</td>
+                    <td>{{ client.addedDate }} à {{ client.addedTime }}</td>
+                    <td>{{ client.user.fullname }}</td>
+                    <td>
+                    {% if client.user.team is not null %}
+                        {{ client.user.team.name }}
+                    {% else %}
+                        Aucune
+                    {% endif %}
+                    </td>
+                    <td>
+                    {% if is_granted('EDIT', client) %}
+                        <a href="{{ path('app_client_edit', {'id': client.id}) }}">Modifier</a>
+                    {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        </div>
+    </div>
+</div>
+{# Pagination #}
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <div class="pagination d-flex justify-content-center mt-3">
+                {{ knp_pagination_render(clients) }}
+            </div>
+        </div>
+    </div>
+</div>    
+<script src="{{ asset('js/statusPhaseFilter.js') }}"></script>
 {% endblock %}

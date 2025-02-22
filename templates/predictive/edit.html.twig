@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Predictive{% endblock %}
+
+{% block body %}
+    <h1>Edit Predictive</h1>
+
+    {{ include('predictive/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_predictive_index') }}">back to list</a>
+
+    {{ include('predictive/_delete_form.html.twig') }}
+{% endblock %}

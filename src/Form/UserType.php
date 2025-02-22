@@ -9,6 +9,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -72,7 +73,17 @@ class UserType extends AbstractType
                     'multiple' => false, 
                     'expanded' => true,
                     'required' => false
-                ]);
+                ])
+            ->add('is_active', CheckboxType::class, [
+                'label' => "Utilisateur active ?",
+                'required' => false,
+                'mapped' => false,
+            ])
+            ->add('on_dispatching', CheckboxType::class, [
+                'label' => "Dans la boucle de dispatching ?",
+                'required' => false,
+                'mapped' => false,
+            ]);
             /*->add('password', RepeatedType::class, [
                     'type' => PasswordType::class,
                     'constraints' => [

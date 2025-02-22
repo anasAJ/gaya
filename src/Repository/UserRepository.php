@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +33,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
+    private function getUsersByTeams( array $selectedTeams, EntityManagerInterface $entityManager): array
+    {
+        $users = [];
+        // Ajouter les utilisateurs des équipes sélectionnées
+        $users = $entityManager->getRepository(User::class)->createQueryBuilder('u')
+            ->join('u.team', 't')
+            ->where('t.id IN (:teams)')
+            ->setParameter('teams', $selectedTeams)
+            ->getQuery()
+            ->getResult();
+
+        return $users;
+    }
+
 
     //    /**
     //     * @return User[] Returns an array of User objects

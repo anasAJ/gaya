@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Predictive index{% endblock %}
+
+{% block body %}
+    <h1>Predictive index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Added_date</th>
+                <th>Added_time</th>
+                <th>Status</th>
+                <th>Status_percent</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for predictive in predictives %}
+            <tr>
+                <td>{{ predictive.id }}</td>
+                <td>{{ predictive.name }}</td>
+                <td>{{ predictive.addedDate }}</td>
+                <td>{{ predictive.addedTime }}</td>
+                <td>{{ predictive.status }}</td>
+                <td>{{ predictive.statusPercent }}</td>
+                <td>
+                    <a href="{{ path('app_predictive_show', {'id': predictive.id}) }}">show</a>
+                    <a href="{{ path('app_predictive_edit', {'id': predictive.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_predictive_new') }}">Create new</a>
+{% endblock %}

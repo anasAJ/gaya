@@ -7,6 +7,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,6 +54,29 @@ final class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/teams/{teamId}', name: 'users_by_team', methods: ['GET'])]
+    public function getUsersByTeams(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        $teamIds = $request->query->get('teams');
+        if (!$teamIds) {
+            return new JsonResponse([]);
+        }
+        
+        $users = $userRepository->createQueryBuilder('u')
+            ->join('u.team', 't')
+            ->where('t.id IN (:teams)')
+            ->setParameter('teams', explode(',', $teamIds))
+            ->getQuery()
+            ->getResult();
+        
+        $data = array_map(fn($user) => [
+            'id' => $user->getId(),
+            'name' => $user->getFullName(),
+        ], $users);
+
+        return new JsonResponse($data);
+    }
+
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
@@ -73,7 +97,19 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword($oldPassword);
-            //$user->setRoles(array($role));
+            
+            if($form->get('is_active')->getData()){
+                $user->setActive(true);
+            }else{
+                $user->setActive(false);
+            }
+
+            if($form->get('on_dispatching')->getData()){
+                $user->setOnDispatching(true);
+            }else{
+                $user->setOnDispatching(false);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -95,4 +131,5 @@ final class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

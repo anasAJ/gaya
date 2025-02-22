@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Predictive{% endblock %}
+
+{% block body %}
+    <h1>Create new Predictive</h1>
+
+    {{ include('predictive/_form.html.twig') }}
+
+    <a href="{{ path('app_predictive_index') }}">back to list</a>
+{% endblock %}

@@ -52,11 +52,18 @@ class Source
     #[ORM\OneToMany(targetEntity: Client::class, mappedBy: 'Source')]
     private Collection $clients;
 
+    /**
+     * @var Collection<int, Predictive>
+     */
+    #[ORM\OneToMany(targetEntity: Predictive::class, mappedBy: 'source')]
+    private Collection $predictives;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
         $this->Product = new ArrayCollection();
         $this->clients = new ArrayCollection();
+        $this->predictives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -208,6 +215,36 @@ class Source
             // set the owning side to null (unless already changed)
             if ($client->getSource() === $this) {
                 $client->setSource(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Predictive>
+     */
+    public function getPredictives(): Collection
+    {
+        return $this->predictives;
+    }
+
+    public function addPredictive(Predictive $predictive): static
+    {
+        if (!$this->predictives->contains($predictive)) {
+            $this->predictives->add($predictive);
+            $predictive->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removePredictive(Predictive $predictive): static
+    {
+        if ($this->predictives->removeElement($predictive)) {
+            // set the owning side to null (unless already changed)
+            if ($predictive->getSource() === $this) {
+                $predictive->setSource(null);
             }
         }
 

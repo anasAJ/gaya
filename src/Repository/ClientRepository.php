@@ -21,9 +21,8 @@ class ClientRepository extends ServiceEntityRepository
         $this->security = $security;
     }
 
-    public function findClientsByUserTeam()
+    public function findClientsByUserTeam($queryBuilder)
     {
-        // Récupérer l'utilisateur connecté
         $user = $this->security->getUser();
         if (!$user) {
             return [];
@@ -32,38 +31,34 @@ class ClientRepository extends ServiceEntityRepository
         // Récupérer l'ID de la team de l'utilisateur
         $teamId = $user->getTeam()->getId();
 
-        // Construire la requête
-        return $this->createQueryBuilder('c')
+        // Ajouter la condition pour l'équipe de l'utilisateur et appliquer le filtre
+        return $queryBuilder
             ->join('c.user', 'u') // Relation Client -> User
             ->join('u.team', 't') // Relation User -> Team
             ->where('t.id = :teamId') // Vérifier que l'équipe est la même
-            ->andWhere('u.roles LIKE :role') // Vérifier que l'utilisateur est ROLE_USER
             ->setParameter('teamId', $teamId)
-            ->setParameter('role', '%ROLE_USER%') // Vérifier que "ROLE_USER" est présent dans le tableau des rôles
             ->getQuery()
             ->getResult();
     }
 
-    public function findClientsByUserId()
+    public function findClientsByUserId($queryBuilder)
     {
-        // Récupérer l'utilisateur connecté
         $user = $this->security->getUser();
         if (!$user) {
             return [];
         }
 
-        // Récupérer l'ID de la team de l'utilisateur
+        // Récupérer l'ID de l'utilisateur
         $userId = $user->getId();
 
-        // Construire la requête
-        return $this->createQueryBuilder('c')
-            ->join('c.user', 'u')
-            ->where('c.user = :userId') // Vérifier que l'équipe est la même
-            ->andWhere('u.roles LIKE :role') // Vérifier que l'utilisateur est ROLE_USER
-            ->setParameter('userId', $userId)
-            ->setParameter('role', '%ROLE_USER%') // Vérifier que "ROLE_USER" est présent dans le tableau des rôles
-            ->getQuery()
-            ->getResult();
+        // Ajouter la condition pour l'utilisateur et appliquer le filtre
+        if (!$queryBuilder->getParameter('userId')) {
+            $queryBuilder
+                ->andWhere('c.user = :userId') // Utilisation de andWhere() au lieu de where()
+                ->setParameter('userId', $userId);
+        }
+    
+        return $queryBuilder->getQuery()->getResult();
     }
 
 

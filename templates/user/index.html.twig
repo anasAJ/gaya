@@ -11,6 +11,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Utilisateur actif</th>
                     <th>Nom & prenom</th>
                     <th>Email</th>
                     <th>phone</th>
@@ -22,6 +23,13 @@
             <tbody>
             {% for user in users %}
                 <tr>
+                    <td>
+                        {% if user.isActive %}
+                            <i class="fa fa-circle" style="color: green;"></i>
+                        {% else %}
+                            <i class="fa fa-circle" style="color: red;"></i>
+                        {% endif %}
+                    </td>
                     <td>{{ user.firstname }} {{ user.lastname }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone }}</td>
